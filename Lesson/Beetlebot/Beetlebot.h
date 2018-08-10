@@ -32,7 +32,7 @@
 #define BE_PS2X_ATT 8
 #define BE_PS2X_DAT 4
 
-class Beetlebot : public SmartCar {
+class Hummerbot : public SmartCar {
 private :
     uint8_t InPut2PIN, InPut1PIN, PwmaPin, InPut3PIN, InPut4PIN;
     uint8_t IrPin;      // Infrared remoter pin
@@ -44,8 +44,8 @@ private :
     ProtocolParser *mProtocolPackage;
 
 public :
-    Beetlebot(ProtocolParser *Package, uint8_t input2 = BE_INPUT2_PIN, uint8_t input1 = BE_INPUT1_PIN, uint8_t input3 = BE_INPUT3_PIN, uint8_t input4 = BE_INPUT4_PIN);
-    ~Beetlebot();
+    Hummerbot(ProtocolParser *Package, uint8_t input2 = BE_INPUT2_PIN, uint8_t input1 = BE_INPUT1_PIN, uint8_t input3 = BE_INPUT3_PIN, uint8_t input4 = BE_INPUT4_PIN);
+    ~Hummerbot();
     IRremote  *mIrRecv;
     PS2X *mPs2x;
     InfraredTracing *mInfraredTracing;

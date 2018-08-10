@@ -1,27 +1,3 @@
-/***********************************************************************
- *       __                                                          _
- *      / /        _____  __    __  _          _   (_)   ________   | |
- *     / /____   / _____) \ \  / / | |   __   | |  | |  (  ______)  | |_____
- *    / / ___/  | |_____   \ \/ /  | |  /  \  | |  | |  | |______   |  ___  |
- *   / /\ \     | |_____|   \  /   | | / /\ \ | |  | |  (_______ )  | |   | |
- *  / /  \ \__  | |_____    / /    | |/ /  \ \| |  | |   ______| |  | |   | |
- * /_/    \___\  \______)  /_/      \__/    \__/   |_|  (________)  |_|   |_|
- *
- *
- * KeyWay Tech firmware
- *
- * Copyright (C) 2015-2020
- *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation, in version 3.
- * learn more you can see <http://www.gnu.org/licenses/>.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.
- *
- */
 #include "Beetlebot.h"
 #include "ProtocolParser.h"
 #include "KeyMap.h"
@@ -52,13 +28,13 @@
 #define UL_LIMIT_MAX 2000
 
 ProtocolParser *mProtocol = new ProtocolParser();
-Beetlebot beetle(mProtocol, INPUT2_PIN, INPUT1_PIN, INPUT3_PIN, INPUT4_PIN);
+Hummerbot beetle(mProtocol, INPUT2_PIN, INPUT1_PIN, INPUT3_PIN, INPUT4_PIN);
 byte Ps2xStatus, Ps2xType;
+ST_PROTOCOL SendData;
 
 void setup()
 {
     Serial.begin(9600);
-    Serial.println("Get last update from https://github.com/keywish/keywish-beetle-bot");
     beetle.init();
     beetle.SetControlMode(E_BLUETOOTH_CONTROL);
     beetle.SetIrPin(BE_IR_PIN);
@@ -199,6 +175,9 @@ void HandleBluetoothRemote()
             case E_ROBOT_CONTROL_SPEED:
                 beetle.SetSpeed(mProtocol->GetRobotSpeed());
                 break ;
+            case E_CONTROL_MODE:
+                beetle.SetControlMode(mProtocol->GetControlMode());
+                break;
             case E_VERSION:
                 break;
         }
@@ -306,9 +285,55 @@ void HandlePS2()
   delay(50);
 }
 
+void SendTracingSignal(){
+    unsigned int TracingSignal = beetle.mInfraredTracing->getValue();
+    SendData.start_code = 0xAA;
+    SendData.type = 0x01;
+    SendData.addr = 0x01;
+    SendData.function = E_INFRARED_TRACKING;
+    SendData.data = (byte *)&TracingSignal;
+    SendData.len = 7;
+    SendData.end_code = 0x55;
+    mProtocol->SendPackage(&SendData, 1);
+}
+
+void SendInfraredData(){
+    unsigned int RightValue = beetle.mInfraredAvoidance->GetInfraredAvoidanceRightValue();
+    unsigned int LeftValue = beetle.mInfraredAvoidance->GetInfraredAvoidanceLeftValue();
+    byte buffer[2];
+    SendData.start_code = 0xAA;
+    SendData.type = 0x01;
+    SendData.addr = 0x01;
+    SendData.function = E_INFRARED_AVOIDANCE_MODE;
+    buffer[0] = LeftValue & 0xFF;
+    buffer[1] = RightValue & 0xFF;
+    SendData.data = buffer;
+    SendData.len = 8;
+    SendData.end_code = 0x55;
+    mProtocol->SendPackage(&SendData, 2);
+}
+
+void SendUltrasonicData(){
+    unsigned int UlFrontDistance =  beetle.mUltrasonic->GetUltrasonicFrontDistance();
+    SendData.start_code = 0xAA;
+    SendData.type = 0x01;
+    SendData.addr = 0x01;
+    SendData.function = E_ULTRASONIC_AVOIDANCE;
+    SendData.data = (byte *)&UlFrontDistance;
+    SendData.len = 7;
+    SendData.end_code = 0x55;
+    mProtocol->SendPackage(&SendData, 1);
+}
 void loop()
 {
     mProtocol->RecevData();
+    if (beetle.GetControlMode() !=  E_BLUETOOTH_CONTROL) {
+        if (mProtocol->ParserPackage()) {
+            if (mProtocol->GetRobotControlFun() == E_CONTROL_MODE) {
+            beetle.SetControlMode(mProtocol->GetControlMode());
+           }
+        }
+    }
     switch(beetle.GetControlMode())
     {
         case E_BLUETOOTH_CONTROL:
@@ -331,6 +356,7 @@ void loop()
         case E_INFRARED_TRACKING_MODE:
             DEBUG_LOG(DEBUG_LEVEL_INFO, "E_INFRARED_TRACKING \n");
             HandleInfraredTracing();
+            SendTracingSignal();
             break;
         case E_INFRARED_AVOIDANCE:
             DEBUG_LOG(DEBUG_LEVEL_INFO, "E_INFRARED_AVOIDANCE \n");
@@ -343,6 +369,8 @@ void loop()
 		    case E_ULTRASONIC_INFRARED_AVOIDANCE:
             DEBUG_LOG(DEBUG_LEVEL_INFO, "E_ULTRASONIC_INFRARED_AVOIDANCE \n");
             HandleUltrasonicInfraredAvoidance();
+            SendInfraredData();
+            SendUltrasonicData();
             break;
         case E_PS2_REMOTE_CONTROL:
             while (Ps2xStatus != 0) { //skip loop if no controller found

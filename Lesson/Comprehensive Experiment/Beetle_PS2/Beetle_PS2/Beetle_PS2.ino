@@ -1,27 +1,30 @@
 /***********************************************************************
- *       __                                                          _
- *      / /        _____  __    __  _          _   (_)   ________   | |
- *     / /____   / _____) \ \  / / | |   __   | |  | |  (  ______)  | |_____
- *    / / ___/  | |_____   \ \/ /  | |  /  \  | |  | |  | |______   |  ___  |
- *   / /\ \     | |_____|   \  /   | | / /\ \ | |  | |  (_______ )  | |   | |
- *  / /  \ \__  | |_____    / /    | |/ /  \ \| |  | |   ______| |  | |   | |
- * /_/    \___\  \______)  /_/      \__/    \__/   |_|  (________)  |_|   |_|
- *
- *
- * KeyWay Tech firmware
- *
- * Copyright (C) 2015-2020
- *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation, in version 3.
- * learn more you can see <http://www.gnu.org/licenses/>.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.
- *
- */
+         __                                                          _
+        / /        _____  __    __  _          _   (_)   ________   | |
+       / /____   / _____) \ \  / / | |   __   | |  | |  (  ______)  | |_____
+      / / ___/  | |_____   \ \/ /  | |  /  \  | |  | |  | |______   |  ___  |
+     / /\ \     | |_____|   \  /   | | / /\ \ | |  | |  (_______ )  | |   | |
+    / /  \ \__  | |_____    / /    | |/ /  \ \| |  | |   ______| |  | |   | |
+   /_/    \___\  \______)  /_/      \__/    \__/   |_|  (________)  |_|   |_|
+
+
+   Keywish Tech firmware
+
+   Copyright (C) 2015-2020
+
+   This program is free software: you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation, in version 3.
+   learn more you can see <http://www.gnu.org/licenses/>.
+
+   This program is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+   or FITNESS FOR A PARTICULAR PURPOSE.
+
+
+   [Title]
+   [Diagram]
+*/
 #include "Beetlebot.h"
 #include "ProtocolParser.h"
 #include "KeyMap.h"
@@ -37,6 +40,7 @@
 #define PS2X_CS  8
 #define PS2X_DAT 4
 
+
 ProtocolParser *mProtocol = new ProtocolParser();
 Beetlebot beetle(mProtocol, INPUT2_PIN, INPUT1_PIN, INPUT3_PIN, INPUT4_PIN);
 byte Ps2xStatus, Ps2xType;
@@ -44,12 +48,12 @@ byte Ps2xStatus, Ps2xType;
 void setup()
 {
     Serial.begin(9600);
-    Serial.println("Get last update from https://github.com/keywish/keywish-beetle-bot");
     beetle.init();
+    beetle.SetSpeed(0);
     beetle.SetControlMode(E_PS2_REMOTE_CONTROL);
     beetle.SetPs2xPin(BE_PS2X_CLK, BE_PS2X_CMD, BE_PS2X_ATT, BE_PS2X_DAT);
-    beetle.SetSpeed(0);
     Ps2xType = beetle.mPs2x->readType();
+    Serial.println("Get last update from https://github.com/keywish/keywish-beetle-bot");
 }
 
 void HandlePS2()
@@ -83,24 +87,24 @@ void HandlePS2()
         if (beetle.mPs2x->Button(PSB_CIRCLE)) {
           beetle.TurnRight();
         }
-    }
-      else {
+     } else {
         beetle.KeepStop();
-      }
-  delay(50);
+    }
+    delay(50);
 }
 
 void loop()
 {
     mProtocol->RecevData();
+    
     switch(beetle.GetControlMode())
     {
         case E_PS2_REMOTE_CONTROL:
             while (Ps2xStatus != 0) { //skip loop if no controller found
-            delay(500);
-            Ps2xStatus = beetle.ResetPs2xPin();
-            Ps2xType = beetle.mPs2x->readType();
-            DEBUG_LOG(DEBUG_LEVEL_INFO, "E_PS2_REMOTE_CONTROL \n");
+                delay(500);
+                Ps2xStatus = beetle.ResetPs2xPin();
+                Ps2xType = beetle.mPs2x->readType();
+                DEBUG_LOG(DEBUG_LEVEL_INFO, "E_PS2_REMOTE_CONTROL \n");
             }
             if (Ps2xType != 2) {
               HandlePS2();

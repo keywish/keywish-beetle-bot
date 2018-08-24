@@ -31,7 +31,7 @@ E_SMARTCAR_CONTROL_MODE SmartCar::GetControlMode(void)
 
 void SmartCar::SetSpeed(int8_t s)
 {
-    // DEBUG_LOG(DEBUG_LEVEL_INFO, "SetSpeed =%d \n", s);
+     DEBUG_LOG(DEBUG_LEVEL_INFO, "SetSpeed =%d \n", s);
     if (s > 100) {
         Speed = 100;
         return;

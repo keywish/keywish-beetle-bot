@@ -2,7 +2,7 @@
 #include "ProtocolParser.h"
 #include "debug.h"
 
-Hummerbot::Hummerbot(ProtocolParser *Package, uint8_t input2, uint8_t input1, uint8_t input3, uint8_t input4): SmartCar("Hummerbot", 0x01, E_BLUETOOTH_CONTROL)
+Beetlebot::Beetlebot(ProtocolParser *Package, uint8_t input2, uint8_t input1, uint8_t input3, uint8_t input4): SmartCar("Beetlebot", 0x01, E_BLUETOOTH_CONTROL)
 {
 	this->InPut2PIN = input2;
 	this->InPut1PIN = input1;
@@ -13,7 +13,7 @@ Hummerbot::Hummerbot(ProtocolParser *Package, uint8_t input2, uint8_t input1, ui
 	Speed = 0;
 }
 
-Hummerbot::~Hummerbot()
+Beetlebot::~Beetlebot()
 {
     delete mIrRecv;
     delete mPs2x;
@@ -22,7 +22,7 @@ Hummerbot::~Hummerbot()
     delete mUltrasonic;
 }
 
-void Hummerbot::init(void)
+void Beetlebot::init(void)
 {
     pinMode(InPut2PIN, OUTPUT);
     digitalWrite(InPut2PIN, LOW);
@@ -34,18 +34,18 @@ void Hummerbot::init(void)
     digitalWrite(InPut4PIN, LOW);
 }
 
-void Hummerbot::GoForward(void)
+void Beetlebot::GoForward(void)
 {
     int value = (Speed / 10) * 25;
     DEBUG_LOG(DEBUG_LEVEL_INFO, "GoForward\n");
-    SetStatus(E_FORWARD);
-    analogWrite(InPut2PIN, LOW);
-    analogWrite(InPut1PIN, value);
     analogWrite(InPut3PIN, LOW);
     analogWrite(InPut4PIN, value);
+    analogWrite(InPut2PIN, LOW);
+    analogWrite(InPut1PIN, value);
+    SetStatus(E_FORWARD);
 }
 
-void Hummerbot::GoBack(void)
+void Beetlebot::GoBack(void)
 {
     int value = (Speed / 10) * 25;
     DEBUG_LOG(DEBUG_LEVEL_INFO, "GoBack\n");
@@ -56,7 +56,7 @@ void Hummerbot::GoBack(void)
     analogWrite(InPut4PIN, LOW);
 }
 
-void Hummerbot::KeepStop(void)
+void Beetlebot::KeepStop(void)
 {
     DEBUG_LOG(DEBUG_LEVEL_INFO, "KeepStop\n");
     SetStatus(E_STOP);
@@ -66,10 +66,10 @@ void Hummerbot::KeepStop(void)
     analogWrite(InPut4PIN, LOW);
 }
 
-void Hummerbot::TurnLeft()
+void Beetlebot::TurnLeft()
 {
     int value = (Speed/10)*25.5;   //app contol beetle_speed is 0 ~ 100 ,pwm is 0~255
-    DEBUG_LOG(DEBUG_LEVEL_INFO, "TurnLeft =%d \n",value);
+    DEBUG_LOG(DEBUG_LEVEL_INFO, "TurnLeft \n");
     analogWrite(InPut2PIN, value);
     analogWrite(InPut1PIN, LOW);
     analogWrite(InPut3PIN, LOW);
@@ -77,8 +77,9 @@ void Hummerbot::TurnLeft()
     SetStatus(E_LEFT);
 }
 
-void Hummerbot::TurnRight()
+void Beetlebot::TurnRight()
 {
+    DEBUG_LOG(DEBUG_LEVEL_INFO, "TurnRight \n");
     int value = (Speed/10)*25.5;   //app contol beetle_speed is 0 ~ 100 ,pwm is 0~255
     analogWrite(InPut2PIN, LOW);
     analogWrite(InPut1PIN, value);
@@ -87,69 +88,60 @@ void Hummerbot::TurnRight()
     SetStatus(E_RIGHT);
 
 }
-void Hummerbot::Drive(void)
+void Beetlebot::Drive(void)
 {
     Drive(Degree);
 }
 
-void Hummerbot::Drive(int degree)
+void Beetlebot::Drive(int degree)
 {
-	DEBUG_LOG(DEBUG_LEVEL_INFO, "degree = %d speed = %d\n", degree, Speed);
-	int value = (Speed / 10) * 25.5;	 //app contol beetle_speed is 0 ~ 100 ,pwm is 0~255
-	float f;
-	if ((0 <= degree && degree <= 5 )|| (degree >= 355 && degree <= 360) ) {
-		TurnRight();
-	} else if (degree > 5 && degree <= 80) {
-		f = (float)(degree) / 79;
+    arduino_printf("degree = %d speed = %d\n", degree, Speed);
+    int value = (Speed / 10) * 25.5;	 //app contol beetle_speed is 0 ~ 100 ,pwm is 0~255
+    float f;
+    if (degree >= 0 && degree <= 90) {
+		f = (float)(degree) / 90;
 		analogWrite(InPut2PIN, LOW);
 		analogWrite(InPut1PIN, value);
 		analogWrite(InPut3PIN, LOW);
 		analogWrite(InPut4PIN, (float)(value * f));
 		DEBUG_LOG(DEBUG_LEVEL_INFO, "TurnRight\n");
 		SetStatus(E_RIGHT);
-	} else if (degree > 80 && degree < 100) {
-		GoForward();
-	} else if (degree >= 100 && degree < 175) {
-		f = (float)(180 - degree) / 79;
+	} else if (degree > 90 && degree <= 180) {
+		f = (float)(180 - degree) / 90;
 		analogWrite(InPut2PIN, LOW);
 		analogWrite (InPut1PIN, (float)(value * f));
 		analogWrite(InPut3PIN, LOW);
 		analogWrite(InPut4PIN, value);
 		SetStatus(E_LEFT);
-	} else if((175 <= degree && degree <= 185)){
-		TurnLeft();
-	} else if (degree > 185 && degree <= 260) {
-		f = (float)(degree - 180) / 79;
+	} else if (degree > 180 && degree <= 270) {
+		f = (float)(degree - 180) / 90;
 		analogWrite(InPut2PIN, (float)(value * f));
 		analogWrite(InPut1PIN, LOW);
 		analogWrite(InPut3PIN, value);
 		analogWrite(InPut4PIN, LOW);
 		DEBUG_LOG(DEBUG_LEVEL_INFO, "TurnLeft\n");
 		SetStatus(E_LEFT);
-	} else if (degree > 260 && degree < 280) {
-		GoBack();
-	} else if (degree >= 280 && degree < 355) {
-		f = (float)(360 - degree) / 79;
+	} else if (degree > 270 && degree <= 360) {
+		f = (float)(360 - degree) / 90;
 		analogWrite(InPut2PIN, value);
 		analogWrite(InPut1PIN, LOW);
 		analogWrite(InPut3PIN, (float)(value * f));
 		analogWrite(InPut4PIN, LOW);
 		DEBUG_LOG(DEBUG_LEVEL_INFO, "TurnRight\n");
 		SetStatus(E_RIGHT);
-	}
-	else {
+	} else {
 		KeepStop();
 	}
 }
 
-void Hummerbot::SetIrPin(uint8_t pin = BE_IR_PIN)
+void Beetlebot::SetIrPin(uint8_t pin = BE_IR_PIN)
 {
 	IrPin = pin;
 	mIrRecv = new IRremote (IrPin);
 	mIrRecv->begin();  // Initialize the infrared receiver
 }
 
-void Hummerbot::SetInfraredTracingPin(uint8_t Pin1 = BE_INFRARED_TRACING_PIN1, uint8_t Pin2 = BE_INFRARED_TRACING_PIN2, uint8_t Pin3 = BE_INFRARED_TRACING_PIN3)
+void Beetlebot::SetInfraredTracingPin(uint8_t Pin1 = BE_INFRARED_TRACING_PIN1, uint8_t Pin2 = BE_INFRARED_TRACING_PIN2, uint8_t Pin3 = BE_INFRARED_TRACING_PIN3)
 {
     static bool InfraredTracingInit = false;
     if (!InfraredTracingInit) {
@@ -162,7 +154,7 @@ void Hummerbot::SetInfraredTracingPin(uint8_t Pin1 = BE_INFRARED_TRACING_PIN1, u
     }
 }
 
-int Hummerbot::SetPs2xPin(uint8_t clk = BE_PS2X_CLK, uint8_t cmd = BE_PS2X_CMD, uint8_t att = BE_PS2X_ATT, uint8_t dat = BE_PS2X_DAT)
+int Beetlebot::SetPs2xPin(uint8_t clk = BE_PS2X_CLK, uint8_t cmd = BE_PS2X_CMD, uint8_t att = BE_PS2X_ATT, uint8_t dat = BE_PS2X_DAT)
 {
     static bool Ps2xInit = false;
     int error = 0 ;
@@ -189,22 +181,22 @@ int Hummerbot::SetPs2xPin(uint8_t clk = BE_PS2X_CLK, uint8_t cmd = BE_PS2X_CMD, 
     }
     return error;
 }
-int Hummerbot::ResetPs2xPin(void)
+int Beetlebot::ResetPs2xPin(void)
 {
-	int error = mPs2x->config_gamepad(Ps2xClkPin, Ps2xCmdPin, Ps2xAttPin, Ps2xDatPin, false, false);
-	if (error == 1) {
-		DEBUG_LOG(DEBUG_LEVEL_ERR, "No controller found, check wiring\n");
-	} else if (error == 2) {
-		DEBUG_LOG(DEBUG_LEVEL_ERR, "Controller found but not accepting commands\n");
-	} else if (error == 3) {
-		DEBUG_LOG(DEBUG_LEVEL_ERR, "Controller refusing to enter Pressures mode, may not support it\n");
-	} else if (error == 0) {
-		DEBUG_LOG(DEBUG_LEVEL_INFO, "Found Controller, configured successful\n");
-	}
-	return error;
+    int error = mPs2x->config_gamepad(Ps2xClkPin, Ps2xCmdPin, Ps2xAttPin, Ps2xDatPin, false, false);
+    if (error == 1) {
+      DEBUG_LOG(DEBUG_LEVEL_ERR, "No controller found, check wiring\n");
+  	} else if (error == 2) {
+  		DEBUG_LOG(DEBUG_LEVEL_ERR, "Controller found but not accepting commands\n");
+  	} else if (error == 3) {
+  		DEBUG_LOG(DEBUG_LEVEL_ERR, "Controller refusing to enter Pressures mode, may not support it\n");
+  	} else if (error == 0) {
+  		DEBUG_LOG(DEBUG_LEVEL_INFO, "Found Controller, configured successful\n");
+  	}
+  	return error;
 }
 
-void Hummerbot::SetUltrasonicPin(uint8_t Trig_Pin = BE_TRIGPIN, uint8_t Echo_Pin = BE_ECHOPIN, uint8_t Sevo_Pin = BE_SERVOPIN)
+void Beetlebot::SetUltrasonicPin(uint8_t Trig_Pin = BE_TRIGPIN, uint8_t Echo_Pin = BE_ECHOPIN, uint8_t Sevo_Pin = BE_SERVOPIN)
 {
     static bool UltrasonicInit = false;
     if (!UltrasonicInit) {
@@ -216,7 +208,7 @@ void Hummerbot::SetUltrasonicPin(uint8_t Trig_Pin = BE_TRIGPIN, uint8_t Echo_Pin
     }
 }
 
-void Hummerbot::SetInfraredAvoidancePin(uint8_t Left_Pin = BE_INFRARED_AVOIDANCE_LEFT_PIN, uint8_t Right_Pin = BE_INFRARED_AVOIDANCE_RIGHT_PIN)
+void Beetlebot::SetInfraredAvoidancePin(uint8_t Left_Pin = BE_INFRARED_AVOIDANCE_LEFT_PIN, uint8_t Right_Pin = BE_INFRARED_AVOIDANCE_RIGHT_PIN)
 {
 	static bool InfraredAvoidanceInit = false;
 	if (!InfraredAvoidanceInit) {
@@ -225,4 +217,43 @@ void Hummerbot::SetInfraredAvoidancePin(uint8_t Left_Pin = BE_INFRARED_AVOIDANCE
 		mInfraredAvoidance = new InfraredAvoidance(InfraredAvoidancePin1, InfraredAvoidancePin2);
 		InfraredAvoidanceInit = true;
 	}
+}
+void Beetlebot::SendTracingSignal(){
+    unsigned int TracingSignal = mInfraredTracing->getValue();
+    SendData.start_code = 0xAA;
+    SendData.type = 0x01;
+    SendData.addr = 0x01;
+    SendData.function = E_INFRARED_TRACKING;
+    SendData.data = (byte *)&TracingSignal;
+    SendData.len = 7;
+    SendData.end_code = 0x55;
+    mProtocolPackage->SendPackage(&SendData, 1);
+}
+
+void Beetlebot::SendInfraredData(){
+    unsigned int RightValue = mInfraredAvoidance->GetInfraredAvoidanceRightValue();
+    unsigned int LeftValue = mInfraredAvoidance->GetInfraredAvoidanceLeftValue();
+    byte buffer[2];
+    SendData.start_code = 0xAA;
+    SendData.type = 0x01;
+    SendData.addr = 0x01;
+    SendData.function = E_INFRARED_AVOIDANCE_MODE;
+    buffer[0] = LeftValue & 0xFF;
+    buffer[1] = RightValue & 0xFF;
+    SendData.data = buffer;
+    SendData.len = 8;
+    SendData.end_code = 0x55;
+    mProtocolPackage->SendPackage(&SendData, 2);
+}
+
+void Beetlebot::SendUltrasonicData(){
+    unsigned int UlFrontDistance =  mUltrasonic->GetUltrasonicFrontDistance();
+    SendData.start_code = 0xAA;
+    SendData.type = 0x01;
+    SendData.addr = 0x01;
+    SendData.function = E_ULTRASONIC_AVOIDANCE;
+    SendData.data = (byte *)&UlFrontDistance;
+    SendData.len = 7;
+    SendData.end_code = 0x55;
+    mProtocolPackage->SendPackage(&SendData, 1);
 }

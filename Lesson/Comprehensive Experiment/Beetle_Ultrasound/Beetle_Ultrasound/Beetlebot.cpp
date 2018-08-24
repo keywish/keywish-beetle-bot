@@ -38,11 +38,11 @@ void Beetlebot::GoForward(void)
 {
     int value = (Speed / 10) * 25;
     DEBUG_LOG(DEBUG_LEVEL_INFO, "GoForward\n");
-    SetStatus(E_FORWARD);
-    analogWrite(InPut2PIN, LOW);
-    analogWrite(InPut1PIN, value);
     analogWrite(InPut3PIN, LOW);
     analogWrite(InPut4PIN, value);
+    analogWrite(InPut2PIN, LOW);
+    analogWrite(InPut1PIN, value);
+    SetStatus(E_FORWARD);
 }
 
 void Beetlebot::GoBack(void)
@@ -69,7 +69,7 @@ void Beetlebot::KeepStop(void)
 void Beetlebot::TurnLeft()
 {
     int value = (Speed/10)*25.5;   //app contol beetle_speed is 0 ~ 100 ,pwm is 0~255
-    DEBUG_LOG(DEBUG_LEVEL_INFO, "TurnLeft =%d \n",value);
+    DEBUG_LOG(DEBUG_LEVEL_INFO, "TurnLeft \n");
     analogWrite(InPut2PIN, value);
     analogWrite(InPut1PIN, LOW);
     analogWrite(InPut3PIN, LOW);
@@ -79,6 +79,7 @@ void Beetlebot::TurnLeft()
 
 void Beetlebot::TurnRight()
 {
+    DEBUG_LOG(DEBUG_LEVEL_INFO, "TurnRight \n");
     int value = (Speed/10)*25.5;   //app contol beetle_speed is 0 ~ 100 ,pwm is 0~255
     analogWrite(InPut2PIN, LOW);
     analogWrite(InPut1PIN, value);
@@ -191,17 +192,17 @@ int Beetlebot::SetPs2xPin(uint8_t clk = BE_PS2X_CLK, uint8_t cmd = BE_PS2X_CMD, 
 }
 int Beetlebot::ResetPs2xPin(void)
 {
-	int error = mPs2x->config_gamepad(Ps2xClkPin, Ps2xCmdPin, Ps2xAttPin, Ps2xDatPin, false, false);
-	if (error == 1) {
-		DEBUG_LOG(DEBUG_LEVEL_ERR, "No controller found, check wiring\n");
-	} else if (error == 2) {
-		DEBUG_LOG(DEBUG_LEVEL_ERR, "Controller found but not accepting commands\n");
-	} else if (error == 3) {
-		DEBUG_LOG(DEBUG_LEVEL_ERR, "Controller refusing to enter Pressures mode, may not support it\n");
-	} else if (error == 0) {
-		DEBUG_LOG(DEBUG_LEVEL_INFO, "Found Controller, configured successful\n");
-	}
-	return error;
+  	int error = mPs2x->config_gamepad(Ps2xClkPin, Ps2xCmdPin, Ps2xAttPin, Ps2xDatPin, false, false);
+  	 if (error == 1) {
+  		DEBUG_LOG(DEBUG_LEVEL_ERR, "No controller found, check wiring\n");
+  	} else if (error == 2) {
+  		DEBUG_LOG(DEBUG_LEVEL_ERR, "Controller found but not accepting commands\n");
+  	} else if (error == 3) {
+  		DEBUG_LOG(DEBUG_LEVEL_ERR, "Controller refusing to enter Pressures mode, may not support it\n");
+  	} else if (error == 0) {
+  		DEBUG_LOG(DEBUG_LEVEL_INFO, "Found Controller, configured successful\n");
+  	}
+  	return error;
 }
 
 void Beetlebot::SetUltrasonicPin(uint8_t Trig_Pin = BE_TRIGPIN, uint8_t Echo_Pin = BE_ECHOPIN, uint8_t Sevo_Pin = BE_SERVOPIN)
@@ -225,4 +226,43 @@ void Beetlebot::SetInfraredAvoidancePin(uint8_t Left_Pin = BE_INFRARED_AVOIDANCE
 		mInfraredAvoidance = new InfraredAvoidance(InfraredAvoidancePin1, InfraredAvoidancePin2);
 		InfraredAvoidanceInit = true;
 	}
+}
+void Beetlebot::SendTracingSignal(){
+    unsigned int TracingSignal = mInfraredTracing->getValue();
+    SendData.start_code = 0xAA;
+    SendData.type = 0x01;
+    SendData.addr = 0x01;
+    SendData.function = E_INFRARED_TRACKING;
+    SendData.data = (byte *)&TracingSignal;
+    SendData.len = 7;
+    SendData.end_code = 0x55;
+    mProtocolPackage->SendPackage(&SendData, 1);
+}
+
+void Beetlebot::SendInfraredData(){
+    unsigned int RightValue = mInfraredAvoidance->GetInfraredAvoidanceRightValue();
+    unsigned int LeftValue = mInfraredAvoidance->GetInfraredAvoidanceLeftValue();
+    byte buffer[2];
+    SendData.start_code = 0xAA;
+    SendData.type = 0x01;
+    SendData.addr = 0x01;
+    SendData.function = E_INFRARED_AVOIDANCE_MODE;
+    buffer[0] = LeftValue & 0xFF;
+    buffer[1] = RightValue & 0xFF;
+    SendData.data = buffer;
+    SendData.len = 8;
+    SendData.end_code = 0x55;
+    mProtocolPackage->SendPackage(&SendData, 2);
+}
+
+void Beetlebot::SendUltrasonicData(){
+    unsigned int UlFrontDistance =  mUltrasonic->GetUltrasonicFrontDistance();
+    SendData.start_code = 0xAA;
+    SendData.type = 0x01;
+    SendData.addr = 0x01;
+    SendData.function = E_ULTRASONIC_AVOIDANCE;
+    SendData.data = (byte *)&UlFrontDistance;
+    SendData.len = 7;
+    SendData.end_code = 0x55;
+    mProtocolPackage->SendPackage(&SendData, 1);
 }

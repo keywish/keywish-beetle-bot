@@ -32,7 +32,7 @@
 #define BE_PS2X_ATT 8
 #define BE_PS2X_DAT 4
 
-class Hummerbot : public SmartCar {
+class Beetlebot : public SmartCar {
 private :
     uint8_t InPut2PIN, InPut1PIN, PwmaPin, InPut3PIN, InPut4PIN;
     uint8_t IrPin;      // Infrared remoter pin
@@ -40,12 +40,13 @@ private :
     uint8_t Ps2xClkPin, Ps2xCmdPin, Ps2xAttPin, Ps2xDatPin;    // for Ps2 remoter
     uint8_t InfraredAvoidancePin1,InfraredAvoidancePin2;     //For infrared obstacle avoidance
     uint8_t EchoPin,TrigPin,ServoPin;
+    ST_PROTOCOL SendData;
 
     ProtocolParser *mProtocolPackage;
 
 public :
-    Hummerbot(ProtocolParser *Package, uint8_t input2 = BE_INPUT2_PIN, uint8_t input1 = BE_INPUT1_PIN, uint8_t input3 = BE_INPUT3_PIN, uint8_t input4 = BE_INPUT4_PIN);
-    ~Hummerbot();
+    Beetlebot(ProtocolParser *Package, uint8_t input2 = BE_INPUT2_PIN, uint8_t input1 = BE_INPUT1_PIN, uint8_t input3 = BE_INPUT3_PIN, uint8_t input4 = BE_INPUT4_PIN);
+    ~Beetlebot();
     IRremote  *mIrRecv;
     PS2X *mPs2x;
     InfraredTracing *mInfraredTracing;
@@ -67,6 +68,9 @@ public :
     int ResetPs2xPin(void);
     void SendBatteryPackage(byte *battery_value);
     void init(void);
+    void SendTracingSignal();
+    void SendInfraredData();
+    void SendUltrasonicData();
 };
 
-#endif  /* _HUMMERBOT_H_ */
+#endif  /* _Beetlebot_H_ */

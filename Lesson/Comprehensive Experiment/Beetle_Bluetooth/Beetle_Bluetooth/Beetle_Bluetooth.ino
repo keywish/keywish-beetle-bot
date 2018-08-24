@@ -1,27 +1,30 @@
 /***********************************************************************
- *       __                                                          _
- *      / /        _____  __    __  _          _   (_)   ________   | |
- *     / /____   / _____) \ \  / / | |   __   | |  | |  (  ______)  | |_____
- *    / / ___/  | |_____   \ \/ /  | |  /  \  | |  | |  | |______   |  ___  |
- *   / /\ \     | |_____|   \  /   | | / /\ \ | |  | |  (_______ )  | |   | |
- *  / /  \ \__  | |_____    / /    | |/ /  \ \| |  | |   ______| |  | |   | |
- * /_/    \___\  \______)  /_/      \__/    \__/   |_|  (________)  |_|   |_|
- *
- *
- * KeyWay Tech firmware
- *
- * Copyright (C) 2015-2020
- *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation, in version 3.
- * learn more you can see <http://www.gnu.org/licenses/>.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.
- *
- */
+         __                                                          _
+        / /        _____  __    __  _          _   (_)   ________   | |
+       / /____   / _____) \ \  / / | |   __   | |  | |  (  ______)  | |_____
+      / / ___/  | |_____   \ \/ /  | |  /  \  | |  | |  | |______   |  ___  |
+     / /\ \     | |_____|   \  /   | | / /\ \ | |  | |  (_______ )  | |   | |
+    / /  \ \__  | |_____    / /    | |/ /  \ \| |  | |   ______| |  | |   | |
+   /_/    \___\  \______)  /_/      \__/    \__/   |_|  (________)  |_|   |_|
+
+
+   Keywish Tech firmware
+
+   Copyright (C) 2015-2020
+
+   This program is free software: you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation, in version 3.
+   learn more you can see <http://www.gnu.org/licenses/>.
+
+   This program is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+   or FITNESS FOR A PARTICULAR PURPOSE.
+
+
+   [Title]
+   [Diagram]
+*/
 #include "Beetlebot.h"
 #include "ProtocolParser.h"
 #include "KeyMap.h"
@@ -32,17 +35,16 @@
 #define INPUT4_PIN 9  // PWMA
 #define INPUT3_PIN 5  // DIRA  ---  left
 
-
 ProtocolParser *mProtocol = new ProtocolParser();
 Beetlebot beetle(mProtocol, INPUT2_PIN, INPUT1_PIN, INPUT3_PIN, INPUT4_PIN);
-
 
 void setup()
 {
     Serial.begin(9600);
-    Serial.println("Get last update from https://github.com/keywish/keywish-beetle-bot");
     beetle.init();
+    beetle.SetSpeed(0);
     beetle.SetControlMode(E_BLUETOOTH_CONTROL);
+    Serial.println("Get last update from https://github.com/keywish/keywish-beetle-bot");
 }
 
 void HandleBluetoothRemote()
@@ -59,6 +61,9 @@ void HandleBluetoothRemote()
             case E_ROBOT_CONTROL_SPEED:
                 beetle.SetSpeed(mProtocol->GetRobotSpeed());
                 break ;
+            case E_CONTROL_MODE:
+                beetle.SetControlMode(mProtocol->GetControlMode());
+                break;
             case E_VERSION:
                 break;
         }

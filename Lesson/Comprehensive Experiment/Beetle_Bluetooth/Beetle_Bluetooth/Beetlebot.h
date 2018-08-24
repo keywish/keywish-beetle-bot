@@ -40,6 +40,7 @@ private :
     uint8_t Ps2xClkPin, Ps2xCmdPin, Ps2xAttPin, Ps2xDatPin;    // for Ps2 remoter
     uint8_t InfraredAvoidancePin1,InfraredAvoidancePin2;     //For infrared obstacle avoidance
     uint8_t EchoPin,TrigPin,ServoPin;
+    ST_PROTOCOL SendData;
 
     ProtocolParser *mProtocolPackage;
 
@@ -67,6 +68,9 @@ public :
     int ResetPs2xPin(void);
     void SendBatteryPackage(byte *battery_value);
     void init(void);
+    void SendTracingSignal();
+    void SendInfraredData();
+    void SendUltrasonicData();
 };
 
-#endif  /* _HUMMERBOT_H_ */
+#endif  /* _Beetlebot_H_ */

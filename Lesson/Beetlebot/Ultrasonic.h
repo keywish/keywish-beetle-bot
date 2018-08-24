@@ -5,12 +5,16 @@
 /* Includes ------------------------------------------------------------------*/
 #include <Arduino.h>
 
+#define UL_LIMIT_MIN 10
+#define UL_LIMIT_MID 20
+#define UL_LIMIT_MAX 500
 
 class Ultrasonic
 {
   private:
     byte EchoPin, TrigPin, ServoPin;
     uint8_t ServoBaseDegree;
+    uint8_t ServoDegree;
 
   public:
     byte determine;

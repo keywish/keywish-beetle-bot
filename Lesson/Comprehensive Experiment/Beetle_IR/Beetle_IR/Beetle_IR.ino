@@ -1,27 +1,30 @@
 /***********************************************************************
- *       __                                                          _
- *      / /        _____  __    __  _          _   (_)   ________   | |
- *     / /____   / _____) \ \  / / | |   __   | |  | |  (  ______)  | |_____
- *    / / ___/  | |_____   \ \/ /  | |  /  \  | |  | |  | |______   |  ___  |
- *   / /\ \     | |_____|   \  /   | | / /\ \ | |  | |  (_______ )  | |   | |
- *  / /  \ \__  | |_____    / /    | |/ /  \ \| |  | |   ______| |  | |   | |
- * /_/    \___\  \______)  /_/      \__/    \__/   |_|  (________)  |_|   |_|
- *
- *
- * KeyWay Tech firmware
- *
- * Copyright (C) 2015-2020
- *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation, in version 3.
- * learn more you can see <http://www.gnu.org/licenses/>.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.
- *
- */
+         __                                                          _
+        / /        _____  __    __  _          _   (_)   ________   | |
+       / /____   / _____) \ \  / / | |   __   | |  | |  (  ______)  | |_____
+      / / ___/  | |_____   \ \/ /  | |  /  \  | |  | |  | |______   |  ___  |
+     / /\ \     | |_____|   \  /   | | / /\ \ | |  | |  (_______ )  | |   | |
+    / /  \ \__  | |_____    / /    | |/ /  \ \| |  | |   ______| |  | |   | |
+   /_/    \___\  \______)  /_/      \__/    \__/   |_|  (________)  |_|   |_|
+
+
+   Keywish Tech firmware
+
+   Copyright (C) 2015-2020
+
+   This program is free software: you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation, in version 3.
+   learn more you can see <http://www.gnu.org/licenses/>.
+
+   This program is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+   or FITNESS FOR A PARTICULAR PURPOSE.
+
+
+   [Title]
+   [Diagram]
+*/
 #include "Beetlebot.h"
 #include "ProtocolParser.h"
 #include "KeyMap.h"
@@ -40,10 +43,11 @@ Beetlebot beetle(mProtocol, INPUT2_PIN, INPUT1_PIN, INPUT3_PIN, INPUT4_PIN);
 void setup()
 {
     Serial.begin(9600);
-    Serial.println("Get last update from https://github.com/keywish/keywish-beetle-bot");
     beetle.init();
+    beetle.SetSpeed(0);
     beetle.SetControlMode(E_INFRARED_REMOTE_CONTROL);
     beetle.SetIrPin(BE_IR_PIN);
+    Serial.println("Get last update from https://github.com/keywish/keywish-beetle-bot");
 }
 
 void HandleInfaredRemote(byte irKeyCode)
@@ -58,18 +62,22 @@ void HandleInfaredRemote(byte irKeyCode)
           beetle.SpeedDown(10);
           break;
         case IR_KEYCODE_UP:
+          // beetle.SetSpeed(100);
           beetle.GoForward();
           break;
         case IR_KEYCODE_DOWN:
+          // beetle.SetSpeed(100);
           beetle.GoBack();
           break;
         case IR_KEYCODE_OK:
           beetle.KeepStop();
           break;
         case IR_KEYCODE_LEFT:
+          // beetle.SetSpeed(60);
           beetle.TurnLeft();
           break;
         case IR_KEYCODE_RIGHT:
+          // beetle.SetSpeed(60);
           beetle.TurnRight();
           break;
         default:
@@ -88,12 +96,11 @@ void loop()
             DEBUG_LOG(DEBUG_LEVEL_INFO, "irKeyCode = %lx \n", irKeyCode);
             HandleInfaredRemote(irKeyCode);
             delay(110);
-            }
-            else {
+            } else {
                 if (beetle.GetStatus() != E_STOP ) {
                     beetle.KeepStop();
-                    }
-                 }
+                }
+             }
             break;
         default:
             break;

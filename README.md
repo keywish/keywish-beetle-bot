@@ -1,17 +1,32 @@
 # Please Contact Us
-Technical support email: ken@keywish-robot.com 
-Sales email: cici@keywish-robot.com
-
+Technical support email: abbott@emakefun.com </br>
+Sales email: cici@keywish-robot.com</br>
 The latest information download address: https://github.com/keywish/keywish-beetle-bot
-
+# Beetle-bot
+![](https://github.com/keywish/keywish-beetle-bot/blob/master/beetle.png)</br>
+# Component List
+![](https://github.com/keywish/keywish-beetle-bot/blob/master/Component%20list.png)
+# Product Introduce
+"Beetle-Bot" is a multifunctional car based on the Arduino UNO and L298N motor. Compared with the traditional car, "Beetle-Bot" is also equipped with wireless control (Bluetooth, infrared, WIFI and so on); ultrasonic; infrared. It can trace and avoid obstacles automatically, of course, makers can also automatically control the car with wireless and make full use of each module, as well as integrate all kinds of related sensors to make the car more intelligent, which is more challenging. "Beetle-Bot" has various types of information, technical manuals, routines, etc., which can teach you step by step. Each electronic fan can use it easily to achieve their desired function.
 # Beetle-bot Feature
-`*Keywish Beetle-bot smart robot car kit is designed for enthusiasts or beginners to get hands-on experience about Arduino programming, electronics assembling and robotics knowledge`</br>
-`*This kit includes HC-SR04 ultrasonic sensor,Infrared barrier, L293D motor drive board, 9g micro servo motor, line tracking module and Bluetooth module, ect.easy for operation and installation`</br>
-`*Working modes:Infrared/ultrasonic obstacle avoidance, Infrared object tracking, Infrared line following, Ultrasonic with servo obstacle avoidance (Detecting in forward, left and right directions)`</br>
-*APP control: Automatically self-built signal hotspot after power on, the user just needs to connect smart phone with the car's hotspot to control the car through an Android app</br>
-*CD with the best tutorial including the programs and codes which bring you to the robot car world</br>
+*	Three groups of black line infrared tracing module</br></br>
+*  Two groups of infrared obstacle avoidance module</br>
+*  Ultrasonic obstacle avoidance</br>
+*  Four DC motor drive</br>
+*  Two 2000mZh, 3.7V rechargeable lithium battery with longer endurance</br>
+*  Remaining capacity of battery real-time detection</br>
+*  Infrared remote control</br>
+*  Bluetooth app control </br>
+*  PS2 handle control (optional)</br>
+*  Support handle control of nRF24L01（optional）</br>
+
 # Required Best Buy Links
-[Buy on Amazon](https://www.amazon.com/gp/product/B07G998XDC?pf_rd_p=d1f45e03-8b73-4c9a-9beb-4819111bef9a&pf_rd_r=677EAMRBEXNHZSTCZHHQ) </br>
-#[Buy on AliExpress](https://www.aliexpress.com/item/Keywish-Smart-Car-beetle-Bot-Controlled-By-App-For-Arduino-UNO-R3-Starter-Kit-With-Tutorial/32848379748.html?spm=2114.search0104.3.34.2e254236y5p1lx&ws_ab_test=searchweb0_0,searchweb201602_1_10152_10151_10065_10344_10068_10342_10325_10343_10546_10340_10548_10341_10084_10083_10618_10307_5711211_10313_10059_10534_100031_10103_10627_10626_10624_10623_10622_5722411_10621_10620_10811_5711311,searchweb201603_25,ppcSwitch_5&algo_expid=8cb714ad-b661-4c80-ad0b-0adf5bde678e-5&algo_pvid=8cb714ad-b661-4c80-ad0b-0adf5bde678e&priceBeautifyAB=0"悬停显示")
+[Buy on Amazon]( https://www.amazon.com/dp/B07G998XDC) </br>
+[Buy on AliExpress]( https://www.aliexpress.com/store/product/Robot-for-Arduino-UNO-R3-Smart-Cars-Super-Starter-Kit-Ultrasonic-Infrared-APP-RC-Remote-Control/3269016_32918589051.html)
+# Video Links
+[Component Introduce](https://www.youtube.com/watch?v=tGq_VgoH-oo)</br>
+[Assembly](https://www.youtube.com/watch?v=gOU1O_FS9EA)</br>
+[Function](https://www.youtube.com/watch?v=w8XnR46ySug)</br>
+
 # Download method
-![](https://github.com/keywish/keywish-beetle-bot/raw/master/Image.png)
+![](https://github.com/keywish/keywish-beetle-bot/blob/master/Image.png)

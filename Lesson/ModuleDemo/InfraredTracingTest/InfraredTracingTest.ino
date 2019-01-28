@@ -24,6 +24,9 @@
  */
  void setup() {
  Serial.begin(9600);
+ pinMode(A0,INPUT);
+ pinMode(A1,INPUT);
+ pinMode(A2,INPUT);
 }
 void loop() {
   int left, centre, right;

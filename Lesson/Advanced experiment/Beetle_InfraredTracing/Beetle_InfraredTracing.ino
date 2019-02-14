@@ -37,7 +37,15 @@ void loop()
   left = analogRead(A0);
   centre = analogRead(A1);
   right = analogRead(A2); /*Read the value collected by 3 sensors */
-  Serial.println(centre);
+  Serial.print("left");
+  Serial.print(left);
+  Serial.print("    ");
+  Serial.print("centre");
+  Serial.print(centre);
+  Serial.print("    ");
+  Serial.print("right");
+  Serial.print(right);
+  Serial.println("    ");
   if ((right >= 975) && (centre <= 8) && (left >= 975)) {
     /* Judge the collected value, if right > the sensor captures a value that is low and reads 0 after analog IO. However, to reduce the error, we set the threshold In 8, to prevent the error caused by the car to determine the wrong, we can
       customize the other values, if the use of digital port to receive the value of the sensor returns only "0" and "1", but to determine the same way. The reason why I did not use digital IO, because we use the digital IO port in other places. */
@@ -68,4 +76,3 @@ void loop()
     analogWrite(INPUT1_PIN, value); //the speed value of motorB is value
   }
 }
-

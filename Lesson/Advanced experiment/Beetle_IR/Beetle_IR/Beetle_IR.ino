@@ -1,28 +1,28 @@
 /***********************************************************************
- *       __                                                          _
- *      / /        _____  __    __  _          _   (_)   ________   | |
- *     / /____   / _____) \ \  / / | |   __   | |  | |  (  ______)  | |_____
- *    / / ___/  | |_____   \ \/ /  | |  /  \  | |  | |  | |______   |  ___  |
- *   / /\ \     | |_____|   \  /   | | / /\ \ | |  | |  (_______ )  | |   | |
- *  / /  \ \__  | |_____    / /    | |/ /  \ \| |  | |   ______| |  | |   | |
- * /_/    \___\  \______)  /_/      \__/    \__/   |_|  (________)  |_|   |_|
- *
- *
- * KeyWay Tech firmware
- *
- * Copyright (C) 2015-2020
- *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation, in version 3.
- * learn more you can see <http://www.gnu.org/licenses/>.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.
- *
- */
-#include "IRremote.h"/*In this section, we use infrared remote control, so we need to call the corresponding library file, as for what is in the library file, we will not study, and interested friends can drive research. We have put this library files on the CD-ROM, we need to copy this folder to the Arduino IDE installation path "libraries" folder, otherwise the program can not compile. */
+         __                                                          _
+        / /        _____  __    __  _          _   (_)   ________   | |
+       / /____   / _____) \ \  / / | |   __   | |  | |  (  ______)  | |_____
+      / / ___/  | |_____   \ \/ /  | |  /  \  | |  | |  | |______   |  ___  |
+     / /\ \     | |_____|   \  /   | | / /\ \ | |  | |  (_______ )  | |   | |
+    / /  \ \__  | |_____    / /    | |/ /  \ \| |  | |   ______| |  | |   | |
+   /_/    \___\  \______)  /_/      \__/    \__/   |_|  (________)  |_|   |_|
+
+
+   KeyWay Tech firmware
+
+   Copyright (C) 2015-2020
+
+   This program is free software: you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation, in version 3.
+   learn more you can see <http://www.gnu.org/licenses/>.
+
+   This program is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+   or FITNESS FOR A PARTICULAR PURPOSE.
+
+*/
+#include "IR_remote.h"/*In this section, we use infrared remote control, so we need to call the corresponding library file, as for what is in the library file, we will not study, and interested friends can drive research. We have put this library files on the CD-ROM, we need to copy this folder to the Arduino IDE installation path "libraries" folder, otherwise the program can not compile. */
 int INPUT3_PIN = 5;//PWMA
 int INPUT4_PIN = 9;//DIRA****************************************left
 int INPUT1_PIN = 6;//PWMB
@@ -35,6 +35,7 @@ byte back = 82;
 byte stop = 28;
 byte left = 8;
 byte right = 90;
+static byte value = 0;
 IRremote *mIrRecv;
 void setup() {
   Serial.begin(9600);
@@ -50,7 +51,6 @@ void loop() {
   byte irKeyCode;
   if (irKeyCode = mIrRecv->getCode()) {/* Read the valueue received by the infrared */
     if (irKeyCode == advance) { /* Judgment on the received valueue, if this valueue is advence, execute the following {} command, here is the forward instruction. */
-      int value = 150;
       analogWrite (INPUT4_PIN, value);
       analogWrite(INPUT3_PIN, 0);//the speed valueue of motorA is value
       analogWrite (INPUT2_PIN, 0);
@@ -58,31 +58,31 @@ void loop() {
       delay(500);  // Receive the next valueue
     }
     if (irKeyCode == expedite1) {/*Judgment on the valueue received, if this valueue is expedite1,execute the command in{}below, here is the acceleration 1 command.*/
-      int value = 200;
-      analogWrite (INPUT4_PIN, 0);
-      analogWrite(INPUT3_PIN, value);//the speed valueue of motorA is value
-      analogWrite (INPUT2_PIN, 0);
-      analogWrite(INPUT1_PIN, value);//the speed valueue of motorB is value
-      delay(500);
+      if(value >= 240)
+      {
+        value = 255;
+        } else {
+        value +=20;
+        }
+        delay(200);
     }
     if (irKeyCode == expedite2) {/*Judgment on the received valueue, if the valueue is expedite2,execute the command {} below,here for the acceleration 2 command. */
-      int value = 255;
-      analogWrite(INPUT4_PIN, 0);
-      analogWrite(INPUT3_PIN, value);//the speed valueue of motorA is value
-      analogWrite(INPUT2_PIN, 0);
-      analogWrite(INPUT1_PIN, value);//the speed valueue of motorB is value
-      delay(500);
+      if (value <= 20)
+      {
+        value = 0;
+      } else {
+        value -= 20;
+      }
+      delay(200);
     }
     if (irKeyCode == stop) { /* To judge the valueue received, if this valueue is stop, execute the command in the following {}, here is the stop instruction. */
-      int value = 0;
       analogWrite(INPUT4_PIN, 0);
-      analogWrite(INPUT3_PIN, value);//the speed valueue of motorA is value
+      analogWrite(INPUT3_PIN, 0);//the speed valueue of motorA is value
       analogWrite(INPUT2_PIN, 0);
-      analogWrite(INPUT1_PIN, value);//the speed valueue of motorB is value
+      analogWrite(INPUT1_PIN, 0);//the speed valueue of motorB is value
       delay(500);
     }
     if (irKeyCode == left) {/* Judgment on the received valueue, if the valueue is left, execute the command in the following {}, here is the instruction to the left. */
-      int value = 150;
       analogWrite(INPUT4_PIN, value);
       analogWrite(INPUT3_PIN, 0);//the speed valueue of motorA is value
       analogWrite(INPUT1_PIN, 0);
@@ -94,7 +94,6 @@ void loop() {
       analogWrite(INPUT1_PIN, 0);//the speed valueue of motorB is 0
     }
     if (irKeyCode == right) {/* Judgment on the received valueue, if the valueue is right, execute the command in the following {}, here is the command to the right. */
-      int value = 150;
       analogWrite(INPUT3_PIN, 0);
       analogWrite(INPUT4_PIN, 0);//the speed valueue of motorA is value
       analogWrite(INPUT2_PIN, 0);
@@ -106,7 +105,6 @@ void loop() {
       analogWrite(INPUT1_PIN, 0);//the speed valueue of motorB is 0
     }
     if (irKeyCode == back) {/* Judgment on the received valueue, if the valueue is back, execute the command {} below, here for the back instruction. */
-      int value = 150;
       analogWrite(INPUT3_PIN, value);
       analogWrite(INPUT4_PIN, 0);//the speed valueue of motorA is value
       analogWrite(INPUT1_PIN, 0);
@@ -114,7 +112,6 @@ void loop() {
       delay(500);
     }
     Serial.println(irKeyCode, HEX);// Output the receive code in hexadecimal
-    Serial.println();// Add a blank line for easy viewing of the output
+    Serial.println();// Add a blank line for easy viewing of the output    
   }
 }
-

@@ -49,7 +49,7 @@ void setup()
 {
     Serial.begin(9600);
     beetle.init();
-    beetle.SetSpeed(0);
+    beetle.SetSpeed(60);
     beetle.SetControlMode(E_PS2_REMOTE_CONTROL);
     beetle.SetPs2xPin(BE_PS2X_CLK, BE_PS2X_CMD, BE_PS2X_ATT, BE_PS2X_DAT);
     Ps2xType = beetle.mPs2x->readType();

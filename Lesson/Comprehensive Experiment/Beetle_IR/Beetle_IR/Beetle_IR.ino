@@ -44,7 +44,7 @@ void setup()
 {
     Serial.begin(9600);
     beetle.init();
-    beetle.SetSpeed(0);
+    beetle.SetSpeed(60);
     beetle.SetControlMode(E_INFRARED_REMOTE_CONTROL);
     beetle.SetIrPin(BE_IR_PIN);
     Serial.println("Get last update from https://github.com/keywish/keywish-beetle-bot");

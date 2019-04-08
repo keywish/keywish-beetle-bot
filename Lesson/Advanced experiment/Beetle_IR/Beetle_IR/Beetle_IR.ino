@@ -35,7 +35,7 @@ byte back = 82;
 byte stop = 28;
 byte left = 8;
 byte right = 90;
-static byte value = 0;
+static byte value = 60;
 IRremote *mIrRecv;
 void setup() {
   Serial.begin(9600);

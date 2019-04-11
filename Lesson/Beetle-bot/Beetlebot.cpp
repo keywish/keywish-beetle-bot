@@ -133,15 +133,23 @@ void Beetlebot::Drive(int degree)
 		KeepStop();
 	}
 }
-
+#if ARDUINO > 10609
 void Beetlebot::SetIrPin(uint8_t pin = BE_IR_PIN)
+#else
+void Beetlebot::SetIrPin(uint8_t pin)
+#endif
 {
 	IrPin = pin;
 	mIrRecv = new IRremote (IrPin);
 	mIrRecv->begin();  // Initialize the infrared receiver
 }
 
+#if ARDUINO > 10609
 void Beetlebot::SetInfraredTracingPin(uint8_t Pin1 = BE_INFRARED_TRACING_PIN1, uint8_t Pin2 = BE_INFRARED_TRACING_PIN2, uint8_t Pin3 = BE_INFRARED_TRACING_PIN3)
+#else
+void Beetlebot::SetInfraredTracingPin(uint8_t Pin1 , uint8_t Pin2 , uint8_t Pin3 )
+#endif
+
 {
     static bool InfraredTracingInit = false;
     if (!InfraredTracingInit) {
@@ -154,7 +162,11 @@ void Beetlebot::SetInfraredTracingPin(uint8_t Pin1 = BE_INFRARED_TRACING_PIN1, u
     }
 }
 
+#if ARDUINO > 10609
 int Beetlebot::SetPs2xPin(uint8_t clk = BE_PS2X_CLK, uint8_t cmd = BE_PS2X_CMD, uint8_t att = BE_PS2X_ATT, uint8_t dat = BE_PS2X_DAT)
+#else
+int Beetlebot::SetPs2xPin(uint8_t clk , uint8_t cmd , uint8_t att, uint8_t dat )
+#endif
 {
     static bool Ps2xInit = false;
     int error = 0 ;
@@ -196,7 +208,12 @@ int Beetlebot::ResetPs2xPin(void)
   	return error;
 }
 
+#if ARDUINO > 10609
 void Beetlebot::SetUltrasonicPin(uint8_t Trig_Pin = BE_TRIGPIN, uint8_t Echo_Pin = BE_ECHOPIN, uint8_t Sevo_Pin = BE_SERVOPIN)
+#else
+void Beetlebot::SetUltrasonicPin(uint8_t Trig_Pin , uint8_t Echo_Pin , uint8_t Sevo_Pin )
+#endif
+
 {
     static bool UltrasonicInit = false;
     if (!UltrasonicInit) {
@@ -208,7 +225,11 @@ void Beetlebot::SetUltrasonicPin(uint8_t Trig_Pin = BE_TRIGPIN, uint8_t Echo_Pin
     }
 }
 
+#if ARDUINO > 10609
 void Beetlebot::SetInfraredAvoidancePin(uint8_t Left_Pin = BE_INFRARED_AVOIDANCE_LEFT_PIN, uint8_t Right_Pin = BE_INFRARED_AVOIDANCE_RIGHT_PIN)
+#else
+void Beetlebot::SetInfraredAvoidancePin(uint8_t Left_Pin , uint8_t Right_Pin )
+#endif
 {
 	static bool InfraredAvoidanceInit = false;
 	if (!InfraredAvoidanceInit) {
@@ -218,10 +239,11 @@ void Beetlebot::SetInfraredAvoidancePin(uint8_t Left_Pin = BE_INFRARED_AVOIDANCE
 		InfraredAvoidanceInit = true;
 	}
 }
-void Beetlebot::SendTracingSignal(){
+void Beetlebot::SendTracingSignal(void)
+{
     unsigned int TracingSignal = mInfraredTracing->getValue();
     SendData.start_code = 0xAA;
-    SendData.type = 0x01;
+    SendData.type = (E_TYPE)0x01;
     SendData.addr = 0x01;
     SendData.function = E_INFRARED_TRACKING;
     SendData.data = (byte *)&TracingSignal;
@@ -230,12 +252,13 @@ void Beetlebot::SendTracingSignal(){
     mProtocolPackage->SendPackage(&SendData, 1);
 }
 
-void Beetlebot::SendInfraredData(){
+void Beetlebot::SendInfraredData(void)
+{
     unsigned int RightValue = mInfraredAvoidance->GetInfraredAvoidanceRightValue();
     unsigned int LeftValue = mInfraredAvoidance->GetInfraredAvoidanceLeftValue();
     byte buffer[2];
     SendData.start_code = 0xAA;
-    SendData.type = 0x01;
+    SendData.type = (E_TYPE)0x01;
     SendData.addr = 0x01;
     SendData.function = E_INFRARED_AVOIDANCE_MODE;
     buffer[0] = LeftValue & 0xFF;
@@ -246,10 +269,11 @@ void Beetlebot::SendInfraredData(){
     mProtocolPackage->SendPackage(&SendData, 2);
 }
 
-void Beetlebot::SendUltrasonicData(){
+void Beetlebot::SendUltrasonicData(void)
+{
     unsigned int UlFrontDistance =  mUltrasonic->GetUltrasonicFrontDistance();
     SendData.start_code = 0xAA;
-    SendData.type = 0x01;
+    SendData.type = (E_TYPE)0x01;
     SendData.addr = 0x01;
     SendData.function = E_ULTRASONIC_AVOIDANCE;
     SendData.data = (byte *)&UlFrontDistance;

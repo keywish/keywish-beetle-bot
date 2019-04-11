@@ -95,62 +95,61 @@ void Beetlebot::Drive(void)
 
 void Beetlebot::Drive(int degree)
 {
-	DEBUG_LOG(DEBUG_LEVEL_INFO, "degree = %d speed = %d\n", degree, Speed);
-	int value = (Speed / 10) * 25.5;	 //app contol beetle_speed is 0 ~ 100 ,pwm is 0~255
-	float f;
-	if ((0 <= degree && degree <= 5 )|| (degree >= 355 && degree <= 360) ) {
-		TurnRight();
-	} else if (degree > 5 && degree <= 80) {
-		f = (float)(degree) / 79;
+    arduino_printf("degree = %d speed = %d\n", degree, Speed);
+    int value = (Speed / 10) * 25.5;	 //app contol beetle_speed is 0 ~ 100 ,pwm is 0~255
+    float f;
+    if (degree >= 0 && degree <= 90) {
+		f = (float)(degree) / 90;
 		analogWrite(InPut2PIN, LOW);
 		analogWrite(InPut1PIN, value);
 		analogWrite(InPut3PIN, LOW);
 		analogWrite(InPut4PIN, (float)(value * f));
 		DEBUG_LOG(DEBUG_LEVEL_INFO, "TurnRight\n");
 		SetStatus(E_RIGHT);
-	} else if (degree > 80 && degree < 100) {
-		GoForward();
-	} else if (degree >= 100 && degree < 175) {
-		f = (float)(180 - degree) / 79;
+	} else if (degree > 90 && degree <= 180) {
+		f = (float)(180 - degree) / 90;
 		analogWrite(InPut2PIN, LOW);
 		analogWrite (InPut1PIN, (float)(value * f));
 		analogWrite(InPut3PIN, LOW);
 		analogWrite(InPut4PIN, value);
 		SetStatus(E_LEFT);
-	} else if((175 <= degree && degree <= 185)){
-		TurnLeft();
-	} else if (degree > 185 && degree <= 260) {
-		f = (float)(degree - 180) / 79;
+	} else if (degree > 180 && degree <= 270) {
+		f = (float)(degree - 180) / 90;
 		analogWrite(InPut2PIN, (float)(value * f));
 		analogWrite(InPut1PIN, LOW);
 		analogWrite(InPut3PIN, value);
 		analogWrite(InPut4PIN, LOW);
 		DEBUG_LOG(DEBUG_LEVEL_INFO, "TurnLeft\n");
 		SetStatus(E_LEFT);
-	} else if (degree > 260 && degree < 280) {
-		GoBack();
-	} else if (degree >= 280 && degree < 355) {
-		f = (float)(360 - degree) / 79;
+	} else if (degree > 270 && degree <= 360) {
+		f = (float)(360 - degree) / 90;
 		analogWrite(InPut2PIN, value);
 		analogWrite(InPut1PIN, LOW);
 		analogWrite(InPut3PIN, (float)(value * f));
 		analogWrite(InPut4PIN, LOW);
 		DEBUG_LOG(DEBUG_LEVEL_INFO, "TurnRight\n");
 		SetStatus(E_RIGHT);
-	}
-	else {
+	} else {
 		KeepStop();
 	}
 }
-
+#if ARDUINO > 10609
 void Beetlebot::SetIrPin(uint8_t pin = BE_IR_PIN)
+#else
+void Beetlebot::SetIrPin(uint8_t pin)
+#endif
 {
 	IrPin = pin;
 	mIrRecv = new IRremote (IrPin);
 	mIrRecv->begin();  // Initialize the infrared receiver
 }
 
+#if ARDUINO > 10609
 void Beetlebot::SetInfraredTracingPin(uint8_t Pin1 = BE_INFRARED_TRACING_PIN1, uint8_t Pin2 = BE_INFRARED_TRACING_PIN2, uint8_t Pin3 = BE_INFRARED_TRACING_PIN3)
+#else
+void Beetlebot::SetInfraredTracingPin(uint8_t Pin1 , uint8_t Pin2 , uint8_t Pin3 )
+#endif
+
 {
     static bool InfraredTracingInit = false;
     if (!InfraredTracingInit) {
@@ -163,7 +162,11 @@ void Beetlebot::SetInfraredTracingPin(uint8_t Pin1 = BE_INFRARED_TRACING_PIN1, u
     }
 }
 
+#if ARDUINO > 10609
 int Beetlebot::SetPs2xPin(uint8_t clk = BE_PS2X_CLK, uint8_t cmd = BE_PS2X_CMD, uint8_t att = BE_PS2X_ATT, uint8_t dat = BE_PS2X_DAT)
+#else
+int Beetlebot::SetPs2xPin(uint8_t clk , uint8_t cmd , uint8_t att, uint8_t dat )
+#endif
 {
     static bool Ps2xInit = false;
     int error = 0 ;
@@ -192,9 +195,9 @@ int Beetlebot::SetPs2xPin(uint8_t clk = BE_PS2X_CLK, uint8_t cmd = BE_PS2X_CMD, 
 }
 int Beetlebot::ResetPs2xPin(void)
 {
-  	int error = mPs2x->config_gamepad(Ps2xClkPin, Ps2xCmdPin, Ps2xAttPin, Ps2xDatPin, false, false);
-  	 if (error == 1) {
-  		DEBUG_LOG(DEBUG_LEVEL_ERR, "No controller found, check wiring\n");
+    int error = mPs2x->config_gamepad(Ps2xClkPin, Ps2xCmdPin, Ps2xAttPin, Ps2xDatPin, false, false);
+    if (error == 1) {
+      DEBUG_LOG(DEBUG_LEVEL_ERR, "No controller found, check wiring\n");
   	} else if (error == 2) {
   		DEBUG_LOG(DEBUG_LEVEL_ERR, "Controller found but not accepting commands\n");
   	} else if (error == 3) {
@@ -205,7 +208,12 @@ int Beetlebot::ResetPs2xPin(void)
   	return error;
 }
 
+#if ARDUINO > 10609
 void Beetlebot::SetUltrasonicPin(uint8_t Trig_Pin = BE_TRIGPIN, uint8_t Echo_Pin = BE_ECHOPIN, uint8_t Sevo_Pin = BE_SERVOPIN)
+#else
+void Beetlebot::SetUltrasonicPin(uint8_t Trig_Pin , uint8_t Echo_Pin , uint8_t Sevo_Pin )
+#endif
+
 {
     static bool UltrasonicInit = false;
     if (!UltrasonicInit) {
@@ -217,7 +225,11 @@ void Beetlebot::SetUltrasonicPin(uint8_t Trig_Pin = BE_TRIGPIN, uint8_t Echo_Pin
     }
 }
 
+#if ARDUINO > 10609
 void Beetlebot::SetInfraredAvoidancePin(uint8_t Left_Pin = BE_INFRARED_AVOIDANCE_LEFT_PIN, uint8_t Right_Pin = BE_INFRARED_AVOIDANCE_RIGHT_PIN)
+#else
+void Beetlebot::SetInfraredAvoidancePin(uint8_t Left_Pin , uint8_t Right_Pin )
+#endif
 {
 	static bool InfraredAvoidanceInit = false;
 	if (!InfraredAvoidanceInit) {
@@ -227,10 +239,11 @@ void Beetlebot::SetInfraredAvoidancePin(uint8_t Left_Pin = BE_INFRARED_AVOIDANCE
 		InfraredAvoidanceInit = true;
 	}
 }
-void Beetlebot::SendTracingSignal(){
+void Beetlebot::SendTracingSignal(void)
+{
     unsigned int TracingSignal = mInfraredTracing->getValue();
     SendData.start_code = 0xAA;
-    SendData.type = 0x01;
+    SendData.type = (E_TYPE)0x01;
     SendData.addr = 0x01;
     SendData.function = E_INFRARED_TRACKING;
     SendData.data = (byte *)&TracingSignal;
@@ -239,12 +252,13 @@ void Beetlebot::SendTracingSignal(){
     mProtocolPackage->SendPackage(&SendData, 1);
 }
 
-void Beetlebot::SendInfraredData(){
+void Beetlebot::SendInfraredData(void)
+{
     unsigned int RightValue = mInfraredAvoidance->GetInfraredAvoidanceRightValue();
     unsigned int LeftValue = mInfraredAvoidance->GetInfraredAvoidanceLeftValue();
     byte buffer[2];
     SendData.start_code = 0xAA;
-    SendData.type = 0x01;
+    SendData.type = (E_TYPE)0x01;
     SendData.addr = 0x01;
     SendData.function = E_INFRARED_AVOIDANCE_MODE;
     buffer[0] = LeftValue & 0xFF;
@@ -255,10 +269,11 @@ void Beetlebot::SendInfraredData(){
     mProtocolPackage->SendPackage(&SendData, 2);
 }
 
-void Beetlebot::SendUltrasonicData(){
+void Beetlebot::SendUltrasonicData(void)
+{
     unsigned int UlFrontDistance =  mUltrasonic->GetUltrasonicFrontDistance();
     SendData.start_code = 0xAA;
-    SendData.type = 0x01;
+    SendData.type = (E_TYPE)0x01;
     SendData.addr = 0x01;
     SendData.function = E_ULTRASONIC_AVOIDANCE;
     SendData.data = (byte *)&UlFrontDistance;

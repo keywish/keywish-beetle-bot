@@ -90,7 +90,7 @@ void HandleUltrasonicInfraredAvoidance()
         beetle.SetSpeed(60);
         beetle.GoForward();
     }
-    DEBUG_LOG(DEBUG_LEVEL_INFO, "UlFrontDistance = %d \n\r", UlFrontDistance);
+    DEBUG_LOG(DEBUG_LEVEL_INFO, "UlFrontDistance = %d \n", UlFrontDistance);
     if (UlFrontDistance < UL_LIMIT_MID) {
         beetle.KeepStop();
         if (UlFrontDistance <= UL_LIMIT_MIN || RightValue < IA_THRESHOLD || LeftValue < IA_THRESHOLD) {
@@ -115,7 +115,7 @@ void HandleUltrasonicInfraredAvoidance()
             }
             if (UlLeftDistance <= UL_LIMIT_MIN && UlRightDistance <= UL_LIMIT_MIN ) {
                 beetle.SetSpeed(80);
-                beetle.TurnLeft();  // turn back
+                beetle.Drive(0);
                 delay(480);
             }
             beetle.KeepStop();
@@ -152,7 +152,7 @@ void HandleUltrasonicAvoidance()
         }
         if (UlLeftDistance <= UL_LIMIT_MIN && UlRightDistance <= UL_LIMIT_MIN ) {
             beetle.SetSpeed(80);
-            beetle.TurnLeft();  // turn back
+            beetle.Drive(0);
             delay(480);
         }
         beetle.KeepStop();
@@ -287,7 +287,7 @@ void HandleInfraredAvoidance()
         beetle.Drive(135);
     } else if((RightValue < IA_THRESHOLD)&&(LeftValue < IA_THRESHOLD)) {
         beetle.SetSpeed(80);
-        beetle.TurnLeft();  // turn back
+        beetle.Drive(0);
         delay(200);
     }
 }

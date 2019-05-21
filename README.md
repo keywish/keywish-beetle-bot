@@ -23,10 +23,6 @@ The latest information download address: https://github.com/keywish/keywish-beet
 # Required Best Buy Links
 [Buy on Amazon]( https://www.amazon.com/dp/B07G998XDC) </br>
 [Buy on AliExpress]( https://www.aliexpress.com/store/product/Robot-for-Arduino-UNO-R3-Smart-Cars-Super-Starter-Kit-Ultrasonic-Infrared-APP-RC-Remote-Control/3269016_32918589051.html)
-# Video Links
-[Component Introduce](https://www.youtube.com/watch?v=tGq_VgoH-oo)</br>
-[Assembly](https://www.youtube.com/watch?v=gOU1O_FS9EA)</br>
-[Function](https://www.youtube.com/watch?v=w8XnR46ySug)</br>
 
 # Download method
 ![](https://github.com/keywish/keywish-beetle-bot/blob/master/Image.png)
